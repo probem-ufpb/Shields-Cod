@@ -1,7 +1,7 @@
 # 🛡️ Arduino UNO - Shields & Placas de Circuito Impresso (PCI)
 
 ![Status do Projeto](https://img.shields.io/badge/Status-Em_Desenvolvimento-green)
-![Licença](https://img.shields.io/badge/License-MIT-blue)
+![Licença](Inova/UFPB)
 ![Hardware](https://img.shields.io/badge/Hardware-Arduino_UNO-00979D)
 
 ## 📖 Sobre o Projeto
