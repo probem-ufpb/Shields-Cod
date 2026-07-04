@@ -1,32 +1,31 @@
-# 🛡️ Arduino UNO - Shields & Placas de Circuito Impresso (PCI)
+# 🛡️ Códigos para Shields do PROBEM - Arduino UNO 
 
-![Status do Projeto](https://img.shields.io/badge/Status-Em_Desenvolvimento-green)
-![Licença](Inova/UFPB)
+![Status do Projeto](https://img.shields.io/badge/Status-Concluído-green)
 ![Hardware](https://img.shields.io/badge/Hardware-Arduino_UNO-00979D)
 
 ## 📖 Sobre o Projeto
 
-Este repositório é destinado aos códigos-fonte, esquemáticos e arquivos de fabricação das **Shields (Placas de Circuito Impresso - PCI)** desenvolvidas como expansão de hardware para a placa de prototipagem eletrônica **Arduino UNO**.
+Este repositório é destinado exclusivamente aos códigos-fonte desenvolvidos para operar em conjunto com as **Shields (Placas de Circuito Impresso - PCI)** projetadas como expansão de hardware para a placa de prototipagem eletrônica **Arduino UNO**.
 
-O objetivo aqui é centralizar os projetos de hardware e software, facilitando a replicação, estudo e implementação dessas placas de expansão em diferentes projetos de automação, robótica e eletrônica.
+O objetivo aqui é centralizar todo o material de software, facilitando o aprendizado e a implementação dessas placas de expansão.
 
 ---
 
 ## 📂 Estrutura do Repositório
 
-O repositório está organizado por módulos de Shields. Cada pasta corresponde a uma placa de expansão específica e contém tudo o que é necessário para utilizá-la:
+O repositório está organizado de acordo com a finalidade de cada código. Os diretórios principais dividem os arquivos em testes de hardware, exemplos práticos e exercícios propostos, estruturados da seguinte forma:
 
 ```text
-├── Shield_NomeDaShield_01/
-│   ├── src/                # Códigos fonte (.ino, .cpp, .h)
-│   ├── hardware/           # Arquivos do projeto da placa (Gerber, Esquemáticos, PCB)
-│   ├── docs/               # Documentação, pinout e datasheets
-│   └── README.md           # Instruções específicas desta Shield
+├── testes/                 # Códigos de teste para validação dos componentes
+│   ├── Shield_01/          # Testes específicos para a Shield 01
+│   └── Shield_02/          # Testes específicos para a Shield 02
 │
-├── Shield_NomeDaShield_02/
-│   ├── src/
-│   ├── hardware/
-│   ├── docs/
-│   └── README.md
+├── exemplos/               # Códigos de cada exemplo prático de uso
+│   ├── Aula_01/            # Exemplos demonstrados na Aula 01
+│   └── Aula_02/            # Exemplos demonstrados na Aula 02
+│
+├── exercicios/             # Códigos de cada exercício proposto para estudo
+│   ├── Aula_01/            # Exercícios referentes à Aula 01
+│   └── Aula_02/            # Exercícios referentes à Aula 02
 │
 └── README.md               # Este arquivo principal
