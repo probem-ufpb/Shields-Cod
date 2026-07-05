@@ -17,15 +17,15 @@ O repositório está organizado de acordo com a finalidade de cada código. Os d
 
 ```text
 ├── testes/                 # Códigos de teste para validação dos componentes
-│   ├── Shield_01/          # Testes específicos para a Shield 01
-│   └── Shield_02/          # Testes específicos para a Shield 02
+│   ├── Shield 1/          # Testes específicos para a Shield 01
+│   └── Shield 2/          # Testes específicos para a Shield 02
 │
 ├── exemplos/               # Códigos de cada exemplo prático de uso
-│   ├── Aula_01/            # Exemplos demonstrados na Aula 01
-│   └── Aula_02/            # Exemplos demonstrados na Aula 02
+│   ├── Aula 1/            # Exemplos demonstrados na Aula 01
+│   └── Aula 2/            # Exemplos demonstrados na Aula 02
 │
 ├── exercicios/             # Códigos de cada exercício proposto para estudo
-│   ├── Aula_01/            # Exercícios referentes à Aula 01
-│   └── Aula_02/            # Exercícios referentes à Aula 02
+│   ├── Aula 1/            # Exercícios referentes à Aula 01
+│   └── Aula 2/            # Exercícios referentes à Aula 02
 │
 └── README.md               # Este arquivo principal
