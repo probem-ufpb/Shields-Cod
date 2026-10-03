@@ -79,14 +79,20 @@ int coluna = 0;
 // Arrays separados para armazenar posicoes geradas dinamicamente
 int posMacas[5][2];
 int posFantasmas[5][2];
-int inPosicao = 0;
 
+// Variáveis para o movimento do fantasma no grid 2x2
+int baseColFantasmas[5]; // Armazena a coluna inicial para a área 2x2 de cada fantasma
+int estadoFantasma[5];   // Qual posição do grid 2x2 o fantasma está (0 a 3)
+unsigned long tempoUltimoMovimentoFantasma = 0;
+int intervaloMovimentoFantasma = 800; // Tempo em ms para o fantasma dar um passo (lento)
+
+int inPosicao = 0;
 int contador = 0;
 
 // === CONFIGURAÇÕES DA MÚSICA INTRO ===
 /* 
-	Evitar mexer nas configurações de música da intro
-   	Música de início do pacman
+    Evitar mexer nas configurações de música da intro
+    Música de início do pacman
 */
 int tempo = 105;
 
@@ -114,16 +120,16 @@ int tempoEsperaFundo = 0;
 
 void setup() 
 {
-  	// Configura os pinos
+    // Configura os pinos
     pinMode(botao1, INPUT);
     pinMode(botao2, INPUT);
     pinMode(buzzer, OUTPUT);
     lcd.createChar(1, pacman);
     lcd.createChar(2, pacmanOM);
     lcd.createChar(3, ghost);
-  	lcd.createChar(4, maca);
+    lcd.createChar(4, maca);
 
-  	// Menu inicial
+    // Menu inicial
     lcd.begin(16, 2);
     lcd.clear();
     lcd.setCursor(1,0);
@@ -136,63 +142,60 @@ void setup()
     // Animação do menu
     menuDoJogo();
   
-  	// Le o ruído de um pino analógico vazio para criar uma semente realmente aleatória
+    // Le o ruído de um pino analógico vazio para criar uma semente realmente aleatória
     srand(analogRead(A0));
   
-  	// Gera as posições da maçã e do fantasma
+    // Gera as posições da maçã e do fantasma
     aleotorizarPosicoes();
-  	
-  	atualizarLCD();
+    
+    atualizarLCD();
 }
 
 void loop() 
 {
   tocarMusicaFundo();
+  moverFantasma(); // Checa se é a hora do fantasma se mexer
   
   if (contador >= 5) 
   {
     fimDeJogo();
   } 
+
+  // ---> ATENÇÂO <--- SE NÃO TIVER PEGANDO TENTA POR LOW
   if (digitalRead(botao1) == HIGH) 
   {
     linha = (linha == 0) ? 1 : 0;
     atualizarLCD();
+    verificarColisaoFantasma();
 
-    // Trava o jogo até soltar o botão 1
+    // Trava o jogo até soltar o botão 1 ---> ATENÇÂO <--- SE NÃO TIVER PEGANDO TENTA POR HIGH
     while(digitalRead(botao1) == LOW) 
     {
       tocarMusicaFundo();
-      delay(1); // **Talvez mexer dps <----
+      moverFantasma(); // Mantém o fantasma andando enquanto segura
+      delay(1); 
     }
-    delay(200);
+    delay(50); // Delay de debounce
   }
 
+  // Trava o jogo até soltar o botão 2 ---> ATENÇÂO <--- SE NÃO TIVER PEGANDO TENTA POR LOW
   if (digitalRead(botao2) == HIGH) 
   {
     coluna = (coluna < 15) ? ++coluna : 0;
     atualizarLCD();
+    verificarColisaoFantasma();
 
-    // Trava o jogo até soltar o botão 2
+    // Trava o jogo até soltar o botão 2 ---> ATENÇÂO <--- SE NÃO TIVER PEGANDO TENTA POR HIGH
     while(digitalRead(botao2) == LOW) 
     {
       tocarMusicaFundo();
-      delay(1); // **Talvez mexer dps <----
+      moverFantasma(); // Mantém o fantasma andando enquanto segura
+      delay(1);
     }
-    delay(200);
+    delay(50); // Delay de debounce
   }
   
-  // Verificacao de colisao com o fantasma (Morte)
-  if (coluna == posFantasmas[inPosicao][0] && linha == posFantasmas[inPosicao][1])
-  {
-    tocarMusicaMorte(); // Toca o som de morte
-    
-    lcd.clear();
-    lcd.setCursor(3,0);
-    lcd.print("GAME OVER!"); // Mensagem de morte
-    delay(1500);
-    
-    resetFunc(); // Volta pro menu resetando tudo
-  }
+  verificarColisaoFantasma();
 
   // Atualizado para checar a matriz posMacas
   if (coluna == posMacas[inPosicao][0] && linha == posMacas[inPosicao][1]) 
@@ -211,6 +214,62 @@ void loop()
     
     atualizarLCD();
     contador++;
+  }
+}
+
+// Mover fantasma num grid 2x2
+void moverFantasma()
+{
+  if (millis() - tempoUltimoMovimentoFantasma >= intervaloMovimentoFantasma) 
+  {
+    tempoUltimoMovimentoFantasma = millis();
+
+    // Avança para o próximo ponto do quadrado 2x2
+    estadoFantasma[inPosicao] = (estadoFantasma[inPosicao] + 1) % 4;
+    
+    int estado = estadoFantasma[inPosicao];
+    int baseCol = baseColFantasmas[inPosicao];
+
+    // Atualiza X e Y de acordo com a ponta do quadrado
+    if (estado == 0) 
+    {
+      posFantasmas[inPosicao][0] = baseCol;
+      posFantasmas[inPosicao][1] = 0;
+    } 
+    else if (estado == 1) 
+    {
+      posFantasmas[inPosicao][0] = baseCol + 1;
+      posFantasmas[inPosicao][1] = 0;
+    } 
+    else if (estado == 2) 
+    {
+      posFantasmas[inPosicao][0] = baseCol + 1;
+      posFantasmas[inPosicao][1] = 1;
+    } 
+    else if (estado == 3) 
+    {
+      posFantasmas[inPosicao][0] = baseCol;
+      posFantasmas[inPosicao][1] = 1;
+    }
+
+    atualizarLCD();
+    verificarColisaoFantasma(); // Checa se o fantasma andou em cima do jogador
+  }
+}
+
+// função para checar morte (colisão)
+void verificarColisaoFantasma()
+{
+  if (coluna == posFantasmas[inPosicao][0] && linha == posFantasmas[inPosicao][1])
+  {
+    tocarMusicaMorte(); // Toca o som de morte
+    
+    lcd.clear();
+    lcd.setCursor(3,0);
+    lcd.print("GAME OVER!"); // Mensagem de morte
+    delay(1500);
+    
+    resetFunc(); // Volta pro menu resetando tudo
   }
 }
 
@@ -287,7 +346,7 @@ void tocarMusicaFundo()
     }
     
     // Desliga a nota após 80% do tempo passao
-  	// (pra não ficar estranho)
+    // (pra não ficar estranho)
     if (millis() - ultimoTempoFundo >= (tempoEsperaFundo * 0.8)) 
     {
         noTone(buzzer);
@@ -373,13 +432,14 @@ void menuDoJogo()
     }
   }
 
-  // Espera o jogador soltar os botões antes de começar o jogo de fato
+  // ---> ATENÇÂO <--- SE NÃO TIVER PEGANDO TENTA POR HIGH e || ao inves de &&
   while(digitalRead(botao1) == LOW && digitalRead(botao2) == LOW) { delay(10); }
 
   // Start apertado
   lcd.clear();
   lcd.setCursor(3,0);
   lcd.print("Boa sorte!");
+  
   // Toca a música uma única vez durante o "boa sorte!"
   tocarIntroPacman(buzzer);
 
@@ -391,9 +451,31 @@ void aleotorizarPosicoes()
 {
   for (int i = 0; i < 5; i++)
   {
-    // Fantasma: coluna aleatória de 2 a 10, linha 0 ou 1
-    posFantasmas[i][0] = 2 + (rand() % 9); 
-    posFantasmas[i][1] = rand() % 2;       
+    // Fantasma: sorteia uma coluna âncora de 2 a 9 (para o grid 2x2 não vazar para as maçãs na pos 11)
+    baseColFantasmas[i] = 2 + (rand() % 8); 
+    estadoFantasma[i] = rand() % 4; // Começa num canto aleatório do quadrado
+    
+    // Configura a coordenada inicial baseado no estado sorteado
+    if (estadoFantasma[i] == 0) 
+    {
+      posFantasmas[i][0] = baseColFantasmas[i];
+      posFantasmas[i][1] = 0;
+    } 
+    else if (estadoFantasma[i] == 1) 
+    {
+      posFantasmas[i][0] = baseColFantasmas[i] + 1;
+      posFantasmas[i][1] = 0;
+    } 
+    else if (estadoFantasma[i] == 2) 
+    {
+      posFantasmas[i][0] = baseColFantasmas[i] + 1;
+      posFantasmas[i][1] = 1;
+    } 
+    else 
+    {
+      posFantasmas[i][0] = baseColFantasmas[i];
+      posFantasmas[i][1] = 1;
+    }
 
     // Fruta (Maca): coluna aleatória de 11 a 15, linha 0 ou 1
     posMacas[i][0] = 11 + (rand() % 5);
