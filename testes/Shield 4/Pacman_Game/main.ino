@@ -173,9 +173,9 @@ void loop()
     {
       tocarMusicaFundo();
       moverFantasma(); // Mantém o fantasma andando enquanto segura
-      delay(1); 
+      delay(300); 
     }
-    delay(50); // Delay de debounce
+    delay(200); // Delay de debounce
   }
 
   // Trava o jogo até soltar o botão 2 ---> ATENÇÂO <--- SE NÃO TIVER PEGANDO TENTA POR LOW
@@ -190,9 +190,9 @@ void loop()
     {
       tocarMusicaFundo();
       moverFantasma(); // Mantém o fantasma andando enquanto segura
-      delay(1);
+      delay(300);
     }
-    delay(50); // Delay de debounce
+    delay(200); // Delay de debounce
   }
   
   verificarColisaoFantasma();
